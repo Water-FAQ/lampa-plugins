@@ -1338,7 +1338,7 @@
       var formattedScore = formatShikimoriScore(score);
       if (!formattedScore && !allowEmpty) return;
       var value = formattedScore ? escapeHtml(formattedScore) : '&nbsp;';
-      var shikimoriRate = $('<div class="full-start__rate rate--shikimori"><div>' + value + '</div><div>Shikimori</div></div>');
+      var shikimoriRate = $('<div class="full-start__rate rate--shikimori"><div>' + value + '</div><div>Shiki</div></div>');
       var firstMeta = rateLine.find('.full-start__pg, .full-start__status').first();
       if (firstMeta.length) {
         shikimoriRate.insertBefore(firstMeta);
