@@ -333,6 +333,7 @@
     var attempt = 0;
     var retryTimer = null;
     var requests = [];
+    var tmdbAnswered = false;
     function stage(text) {
       if (!cancelled && typeof onstage === 'function') onstage(text);
     }
@@ -372,6 +373,7 @@
       if (cancelled || finished || !card || !card.id) return;
       method = method || card.media_type || (card.number_of_episodes ? 'tv' : 'movie');
       card.media_type = method;
+      card.source = 'tmdb';
       decorateCard(card);
       saveMapping(card, method);
       stage('Открываем карточку…');
@@ -379,6 +381,7 @@
       Lampa.Activity.push({
         url: '',
         component: 'full',
+        source: 'tmdb',
         id: card.id,
         method: method,
         shikimori_id: animeData.id,
@@ -386,41 +389,37 @@
         card: card
       });
     }
+    // Используем тот же адрес API и транспорт, что и штатные карточки Lampa.
+    function requestTmdb(path, callback, onerror) {
+      var apiKey = Lampa.TMDB && typeof Lampa.TMDB.key === 'function' ? Lampa.TMDB.key() : '4ef0d7355d9ffb5151e987764708ce96';
+      var request = path + (path.indexOf('?') === -1 ? '?' : '&') + 'api_key=' + encodeURIComponent(apiKey) + '&language=' + encodeURIComponent(Lampa.Storage.field('language') || 'ru');
+      var url = Lampa.TMDB && typeof Lampa.TMDB.api === 'function' ? Lampa.TMDB.api(request) : 'https://api.themoviedb.org/3/' + request;
+      var network = new Lampa.Reguest();
+      network.timeout(10000);
+      track({ abort: function () { network.clear(); } });
+      network.silent(url, function (response) {
+        if (cancelled || finished) return;
+        if (!response || response.success === false || response.status_code) return onerror();
+        tmdbAnswered = true;
+        callback(response);
+      }, function () {
+        if (!cancelled && !finished) onerror();
+      });
+    }
     function searchTmdb(query, callback, onerror) {
-      var apiKey = "4ef0d7355d9ffb5151e987764708ce96";
-      var apiUrlTMDB = 'https://api.themoviedb.org/3/';
-      var apiUrlProxy = 'apitmdb.' + (Lampa.Manifest && Lampa.Manifest.cub_domain ? Lampa.Manifest.cub_domain : 'cub.red') + '/3/';
-      var request = "search/multi?api_key=".concat(apiKey, "&language=").concat(Lampa.Storage.field('language'), "&include_adult=true&query=").concat(encodeURIComponent(cleanName(query)));
-      track($.ajax({
-        url: Lampa.Storage.field('proxy_tmdb') ? Lampa.Utils.protocol() + apiUrlProxy + request : apiUrlTMDB + request,
-        method: 'GET',
-        timeout: 7000
-      }).done(function (response) {
-        if (!cancelled) callback(response);
-      }).fail(function () {
-        if (!cancelled) onerror();
-      }));
+      requestTmdb('search/multi?include_adult=true&query=' + encodeURIComponent(cleanName(query)), callback, onerror);
     }
     function getTmdb(id, type, callback, tryAlternate, onerror) {
       stage('Проверяем найденную карточку…');
-      var apiKey = "4ef0d7355d9ffb5151e987764708ce96";
-      var apiUrlTMDB = 'https://api.themoviedb.org/3/';
-      var apiUrlProxy = 'apitmdb.' + (Lampa.Manifest && Lampa.Manifest.cub_domain ? Lampa.Manifest.cub_domain : 'cub.red') + '/3/';
-      var request = "".concat(type, "/").concat(id, "?api_key=").concat(apiKey, "&language=").concat(Lampa.Storage.field('language'));
-      track($.ajax({
-        url: Lampa.Storage.field('proxy_tmdb') ? Lampa.Utils.protocol() + apiUrlProxy + request : apiUrlTMDB + request,
-        method: 'GET',
-        timeout: 7000
-      }).done(function (response) {
-        if (!cancelled) callback(response, type);
-      }).fail(function () {
-        if (cancelled) return;
+      requestTmdb(type + '/' + id, function (response) {
+        callback(response, type);
+      }, function () {
         if (tryAlternate) {
           getTmdb(id, type === 'movie' ? 'tv' : 'movie', callback, false, onerror);
         } else {
           onerror();
         }
-      }));
+      });
     }
     function filterTmdbResults(response) {
       var expectedType = tmdbType(animeData.kind);
@@ -458,7 +457,7 @@
     }
     function showNotFound() {
       finish();
-      Lampa.Noty.show('Не удалось найти подходящую карточку этого аниме в TMDB. Попробуйте открыть карточку ещё раз.');
+      Lampa.Noty.show(tmdbAnswered ? 'Не удалось найти подходящую карточку этого аниме в TMDB. Попробуйте открыть карточку ещё раз.' : 'Не удалось подключиться к TMDB. Проверьте, открываются ли обычные карточки Lampa, и настройки подключения к TMDB.');
     }
     function failAttempt() {
       if (cancelled || finished) return;
@@ -496,11 +495,13 @@
               Lampa.Controller.toggle("content");
             },
             onSelect: function onSelect(a) {
+              a.card.source = 'tmdb';
               decorateCard(a.card);
               saveMapping(a.card, a.card.media_type);
               Lampa.Activity.push({
                 url: '',
                 component: 'full',
+                source: 'tmdb',
                 id: a.card.id,
                 method: a.card.media_type,
                 shikimori_id: animeData.id,
@@ -630,7 +631,8 @@
     var items = [];
     var html = $("<div class='LMEShikimori-module'></div>");
     var head = $("<div class='LMEShikimori-head torrent-filter'><div class='LMEShikimori__home simple-button simple-button--filter selector'>Главная</div><div class='LMEShikimori__sections simple-button simple-button--filter selector'>Разделы</div><div class='LMEShikimori__search simple-button simple-button--filter selector'>Фильтры</div><div class='LMEShikimori-filter-summary'></div></div>");
-    var body = $('<div class="LMEShikimori-catalog--list category-full"></div>');
+    var body = $('<div class="LMEShikimori-catalog--list category-full cols--6"></div>');
+    if (Lampa.Platform && typeof Lampa.Platform.screen === 'function' && Lampa.Platform.screen('tv')) body.addClass('LMEShikimori-catalog--tv');
     var active, last;
     var opening = false;
     var currentSearch = null;
@@ -1559,7 +1561,7 @@
     };
     Lampa.Manifest.plugins = manifest;
     //Set Style and Template
-    Lampa.Template.add('LMEShikimoriStyle', "<style>\n            .LMEShikimori-catalog--list .LMEShikimori.card{box-sizing:border-box;z-index:1}.LMEShikimori-catalog--list .LMEShikimori.card.focus,.LMEShikimori-catalog--list .LMEShikimori.card.hover{z-index:10}.LMEShikimori-catalog--list .LMEShikimori.card__title{display:-webkit-box;height:3.6em;min-height:3.6em;max-height:3.6em;line-height:1.2;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden;text-overflow:ellipsis}.LMEShikimori-catalog--list .LMEShikimori.card__age{height:1.08em;visibility:hidden}.LMEShikimori-head.torrent-filter{margin-left:1.5em;display:flex;flex-wrap:wrap;align-items:center}.LMEShikimori-filter-summary{display:none;flex-basis:100%;width:100%;margin-top:.65em;font-size:1.05em;line-height:1.35;color:rgba(255,255,255,.8);white-space:normal}.LMEShikimori-empty{padding:3em 1.5em}.LMEShikimori-empty__title{font-size:1.4em;margin-bottom:1.2em}.LMEShikimori-empty__reset{display:inline-block}.LMEShikimori.card__type{background:#ff4242;color:#fff}.LMEShikimori .card__season{position:absolute;left:-.8em;top:3.4em;padding:.4em;background:#05f;color:#fff;font-size:.8em;-webkit-border-radius:.3em;border-radius:.3em;max-width:85%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:2}.LMEShikimori .card__status{position:absolute;left:-.8em;bottom:1em;padding:.4em;color:#000;font-size:.8em;-webkit-border-radius:.3em;border-radius:.3em;max-width:85%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:2}.LMEShikimori .card__status--ongoing{background:#57f570;color:#17491c}.LMEShikimori .card__status--released{background:#ffe216;color:#000}.LMEShikimori .card__status--anons{background:#9b6dff;color:#fff}.LMEShikimori .card__status--unknown{background:#777;color:#fff}.LMEShikimori.card__season.no-season{display:none}body.shikimori-opening .activity--load .activity__loader::after{position:absolute;left:0;right:0;top:calc(50% + 2.5em);text-align:center;color:#fff;font-size:1.15em;font-weight:400;line-height:1.3}body.shikimori-stage-search .activity--load .activity__loader::after{content:'Ищем карточку в TMDB…'}body.shikimori-stage-check .activity--load .activity__loader::after{content:'Проверяем найденную карточку…'}body.shikimori-stage-retry .activity--load .activity__loader::after{content:'Повторяем поиск…'}body.shikimori-stage-open .activity--load .activity__loader::after{content:'Открываем карточку…'}@media screen and (min-width:768px){.LMEShikimori-catalog--list .LMEShikimori.card{width:16.666666%}}\n        </style>");
+    Lampa.Template.add('LMEShikimoriStyle', "<style>\n            .LMEShikimori-catalog--list .LMEShikimori.card{box-sizing:border-box;z-index:1}.LMEShikimori-catalog--list .LMEShikimori.card.focus,.LMEShikimori-catalog--list .LMEShikimori.card.hover{z-index:10}.LMEShikimori-catalog--list .LMEShikimori.card__title{display:-webkit-box;height:3.6em;min-height:3.6em;max-height:3.6em;line-height:1.2;-webkit-box-orient:vertical;-webkit-line-clamp:3;line-clamp:3;overflow:hidden;text-overflow:ellipsis}.LMEShikimori-catalog--list .LMEShikimori.card__age{height:1.08em;visibility:hidden}.LMEShikimori-head.torrent-filter{margin-left:1.5em;display:flex;flex-wrap:wrap;align-items:center}.LMEShikimori-filter-summary{display:none;flex-basis:100%;width:100%;margin-top:.65em;font-size:1.05em;line-height:1.35;color:rgba(255,255,255,.8);white-space:normal}.LMEShikimori-empty{padding:3em 1.5em}.LMEShikimori-empty__title{font-size:1.4em;margin-bottom:1.2em}.LMEShikimori-empty__reset{display:inline-block}.LMEShikimori.card__type{background:#ff4242;color:#fff}.LMEShikimori .card__season{position:absolute;left:-.8em;top:3.4em;padding:.4em;background:#05f;color:#fff;font-size:.8em;-webkit-border-radius:.3em;border-radius:.3em;max-width:85%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:2}.LMEShikimori .card__status{position:absolute;left:-.8em;bottom:1em;padding:.4em;color:#000;font-size:.8em;-webkit-border-radius:.3em;border-radius:.3em;max-width:85%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:2}.LMEShikimori .card__status--ongoing{background:#57f570;color:#17491c}.LMEShikimori .card__status--released{background:#ffe216;color:#000}.LMEShikimori .card__status--anons{background:#9b6dff;color:#fff}.LMEShikimori .card__status--unknown{background:#777;color:#fff}.LMEShikimori.card__season.no-season{display:none}body.shikimori-opening .activity--load .activity__loader::after{position:absolute;left:0;right:0;top:calc(50% + 2.5em);text-align:center;color:#fff;font-size:1.15em;font-weight:400;line-height:1.3}body.shikimori-stage-search .activity--load .activity__loader::after{content:'Ищем карточку в TMDB…'}body.shikimori-stage-check .activity--load .activity__loader::after{content:'Проверяем найденную карточку…'}body.shikimori-stage-retry .activity--load .activity__loader::after{content:'Повторяем поиск…'}body.shikimori-stage-open .activity--load .activity__loader::after{content:'Открываем карточку…'}@media screen and (min-width:768px){.LMEShikimori-catalog--tv .LMEShikimori.card{width:16.666666%}}\n        </style>");
     Lampa.Template.add("LMEShikimori-Card", "<div class=\"LMEShikimori card selector layer--visible layer--render\">\n                <div class=\"LMEShikimori card__view\">\n                    <img src=\"{img}\" class=\"LMEShikimori card__img\" />\n                    <div class=\"LMEShikimori card__type\">{type}</div>\n                    <div class=\"LMEShikimori card__vote\">{rate}</div>\n                    <div class=\"LMEShikimori card__season\">{season}</div>\n                    <div class=\"LMEShikimori card__status card__status--{status_class}\">{status}</div>\n                </div>\n                <div class=\"LMEShikimori card__title\">{title}</div>\n                <div class=\"LMEShikimori card__age\">&nbsp;</div>\n            </div>");
     Lampa.Component.add(manifest.component, Component$1);
     //Set Franchise for FullCard
@@ -1575,3 +1577,4 @@
   if (!window.plugin_shikimori_ready) startPlugin();
 
 })();
+
