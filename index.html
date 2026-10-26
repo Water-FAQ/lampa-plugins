@@ -1,20 +1,75 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#11161c">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#11161c">
 <meta name="description" content="Плагины WaterFAQ для Lampa: описания возможностей, инструкции и история обновлений.">
 <title>WaterFAQ — плагины для Lampa</title>
 <style>
-:root{color-scheme:dark;--bg:#11161c;--panel:#1a222c;--line:#32404e;--text:#f1f5f7;--muted:#b0bdca;--accent:#b9efd1}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-height,76px) + 20px)}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:inherit;text-underline-offset:4px}button,textarea{font:inherit}a:focus-visible,button:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:5px}.wrap{width:min(1080px,calc(100% - 48px));margin:auto}.topbar,footer{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line)}.brand{font-size:20px;line-height:1.4;font-weight:650;margin:0;letter-spacing:0}.topbar nav{display:flex;flex-wrap:wrap;gap:10px 22px}.topbar a,footer{font-size:14px;color:var(--muted)}.hero{padding:20px 0 24px}.lead{font-size:16px;color:var(--muted);margin:0}h2{font-size:28px;line-height:1.25;letter-spacing:-.025em;margin:0}h3{font-size:18px;margin:0 0 10px}.catalog{display:grid;gap:22px;padding-bottom:48px}.plugin{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:30px;display:grid;grid-template-columns:1.25fr 1fr;gap:38px;align-items:start;min-width:0}.plugin p{color:var(--muted);margin:14px 0}.plugin ul{padding-left:20px;color:var(--muted);font-size:15px}.plugin .tagline{font-size:17px;line-height:1.5;color:var(--muted);margin:10px 0 18px}.plugin .more{font-size:14px}.connect{min-width:0;padding-top:5px}.url-label{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}.plugin-url{width:100%;display:block;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;padding:14px 12px;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;resize:none;overflow-wrap:anywhere;word-break:break-all}.copy{width:100%;margin-top:12px;border:0;border-radius:10px;background:var(--accent);color:#11251c;font-weight:700;padding:14px 18px;cursor:pointer}.copy:hover{background:#d3f8e3}.copy:disabled{opacity:.7}.status{min-height:24px;color:var(--accent);font-size:13px;margin-top:9px}.status:empty{display:none}.plugin-links{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:16px;font-size:15px}.plugin-links a{color:var(--accent)}section{padding:42px 0;border-top:1px solid var(--line)}.section-head{margin-bottom:28px}.steps{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;counter-reset:steps}.steps li{counter-increment:steps;border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:15px}.steps li:before{content:"0" counter(steps);display:block;color:var(--accent);font:13px ui-monospace,monospace;margin-bottom:12px}.steps strong{color:var(--text)}.note{font-size:14px;color:var(--muted);border-left:2px solid var(--line);padding-left:18px;margin:26px 0 0}.faq{display:grid;grid-template-columns:1fr 1fr;gap:30px}.faq p{font-size:15px;color:var(--muted);margin:0}.scale{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.score{border-radius:8px;padding:5px 11px;background:var(--bg);font-weight:650}.red{color:#E57373}.orange{color:#FFB74D}.blue{color:#64B5F6}.green{color:#81C784}details{border-top:1px solid var(--line);padding:23px 0}summary{cursor:pointer;font-weight:600}.plugin-settings{grid-column:1/-1;padding:18px 0 0}.plugin-settings summary{color:var(--accent)}.settings-content{padding-top:22px}.plugin-settings .faq p{margin:0}.guide h3{font-size:17px;margin:22px 0 8px}.guide h3:first-child{margin-top:0}.guide p,.guide li{font-size:15px}.guide ol{padding-left:22px;color:var(--muted)}.history{color:var(--muted);font-size:14px;max-width:780px;padding-top:18px}.history h3{color:var(--text);font-size:16px}footer{border-top:1px solid var(--line);border-bottom:0;padding-bottom:36px}
-@media(max-width:760px){.topbar{padding:16px 0;gap:12px;align-items:flex-start}.brand{font-size:20px}.hero{padding:18px 0 22px}.plugin{grid-template-columns:1fr;gap:20px;padding:24px}.steps{grid-template-columns:1fr 1fr}.faq{grid-template-columns:1fr}h2{font-size:25px}}@media(max-width:400px){.wrap{width:calc(100% - 32px)}.plugin{padding:20px}.topbar nav{gap:14px}.steps{grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-.toc-desktop{display:none}.toc-mobile{padding:14px 0;margin:0 0 22px;border-bottom:1px solid var(--line)}.toc-mobile nav{display:grid;gap:12px;padding:18px 0 4px}.toc-mobile nav a{font-size:15px;color:var(--muted)}.toc-desktop nav{display:grid;gap:14px}.toc-desktop h2{font-size:14px;margin:0 0 18px;color:var(--text);letter-spacing:0}.toc-desktop a{font-size:14px;line-height:1.5;color:var(--muted);text-decoration:none;overflow-wrap:anywhere}.toc-desktop a:hover{color:var(--accent)}@media(min-width:1440px){.toc-mobile{display:none}.toc-desktop{display:block;position:fixed;top:28px;right:calc(50% + 564px);width:clamp(140px,calc((100vw - 1080px)/2 - 40px),220px);max-height:calc(100vh - 56px);overflow-y:auto;padding:4px 0 12px;scrollbar-width:thin}}
-.topbar{position:sticky;top:0;z-index:20;background:var(--bg)}.back-top{position:fixed;right:24px;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:30;display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;padding:0;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--accent);box-shadow:0 4px 18px #0004;cursor:pointer}.back-top[hidden]{display:none}.back-top:hover{background:#25332e;border-color:var(--accent)}.back-top svg{width:25px;height:25px;display:block}.back-top:focus-visible{outline:3px solid var(--accent);outline-offset:4px}@media(min-width:1440px){.toc-desktop{top:calc(var(--header-height,76px) + 24px);max-height:calc(100vh - var(--header-height,76px) - 48px)}}@media(max-width:760px){.back-top{right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}}
-.topbar{flex-wrap:nowrap;gap:12px;padding:12px 0;min-height:64px}.topbar .brand{font-size:20px;white-space:nowrap;margin:0;min-width:0}.topbar .toc-mobile{flex:none;margin:0;padding:0;border:0}.toc-mobile summary{display:flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:9px;color:var(--accent);list-style:none;cursor:pointer}.toc-mobile summary::-webkit-details-marker{display:none}.toc-mobile summary::marker{content:""}.toc-mobile summary svg{display:block;width:24px;height:24px}.toc-mobile[open] summary{background:var(--panel);border-color:var(--accent)}.topbar .toc-mobile nav{position:absolute;top:100%;right:0;left:0;z-index:25;display:grid;gap:0;padding:8px 0;background:var(--panel);border:1px solid var(--line);border-radius:0 0 12px 12px;box-shadow:0 12px 24px #0005;max-height:calc(100dvh - var(--header-height,64px) - 16px);overflow-y:auto}.topbar .toc-mobile nav a{display:block;padding:12px 18px;font-size:15px;line-height:1.5;text-decoration:none}.topbar .toc-mobile nav a:hover{background:var(--bg);color:var(--accent)}@media(max-width:760px){.topbar{padding:8px 0;min-height:56px;align-items:center;gap:8px}.topbar .brand{font-size:clamp(12px,3.5vw,16px)}.topbar .toc-mobile summary{width:38px;height:38px}}
-footer{justify-content:flex-start;gap:8px 24px}
+:root{color-scheme:dark;--bg:#11161c;--panel:#1a222c;--line:#32404e;--text:#f1f5f7;--muted:#b0bdca;--accent:#b9efd1;--accent-soft:rgba(185,239,209,.1);--header-height:65px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-height) + 20px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:inherit;text-underline-offset:4px}button,textarea{font:inherit}
+a:focus-visible,button:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:5px}
+.wrap,.workspace{width:min(1080px,calc(100% - 48px));margin:0 auto}
+.topbar{position:sticky;top:0;width:100%;z-index:30;padding-top:env(safe-area-inset-top,0px);background:#11161c;border-bottom:1px solid var(--line);isolation:isolate}.topbar::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:env(safe-area-inset-top,0px);background:#11161c;pointer-events:none}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;height:64px}
+.brand{font-size:20px;line-height:1.4;font-weight:650;margin:0;white-space:nowrap;letter-spacing:0}
+.brand a{color:var(--text);text-decoration:none}
+.page-scroll-progress{position:absolute;left:0;right:0;bottom:-1px;height:2px;overflow:hidden;pointer-events:none}
+.page-scroll-progress span{display:block;width:100%;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:left center}
+.toc-toggle{display:grid;place-items:center;flex:none;width:40px;height:40px;padding:0;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--accent);cursor:pointer}
+.toc-toggle svg{display:block;width:24px;height:24px}
+.toc-toggle:hover,.toc-toggle[aria-expanded="true"]{border-color:var(--accent)}
+.mobile-toc-panel{position:fixed;z-index:40;top:calc(var(--header-height) + 8px);right:max(16px,calc((100vw - 1080px)/2));width:min(320px,calc(100% - 32px));max-height:calc(100dvh - var(--header-height) - 24px);display:grid;gap:4px;padding:7px;overflow:auto;border:1px solid var(--line);border-radius:11px;background:var(--panel);box-shadow:0 14px 32px #0005}
+.mobile-toc-panel[hidden]{display:none}
+.toc-desktop{display:none}
+.toc-desktop a,.mobile-toc-panel a{position:relative;display:block;padding:10px 14px 10px 18px;border-radius:9px;color:var(--muted);font-size:14px;line-height:1.5;text-decoration:none;overflow-wrap:anywhere}
+.mobile-toc-panel a{font-size:15px}
+.toc-desktop a::before,.mobile-toc-panel a::before{content:"";position:absolute;top:8px;bottom:8px;left:0;width:3px;border-radius:3px;background:transparent}
+.toc-desktop a:hover,.toc-desktop a.is-active,.mobile-toc-panel a:hover,.mobile-toc-panel a.is-active{background:var(--accent-soft);color:var(--accent)}
+.toc-desktop a.is-active::before,.mobile-toc-panel a.is-active::before{background:var(--accent)}
+.workspace{display:block}
+main{min-width:0}
+.hero{padding:20px 0 24px}
+.lead{font-size:16px;color:var(--muted);margin:0}
+h2{font-size:28px;line-height:1.25;letter-spacing:-.025em;margin:0}
+h3{font-size:18px;margin:0 0 10px}
+.catalog{display:grid;gap:22px;padding-bottom:48px}
+.plugin{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:30px;display:grid;grid-template-columns:1.25fr 1fr;gap:38px;align-items:start;min-width:0}
+.plugin p{color:var(--muted);margin:14px 0}.plugin ul{padding-left:20px;color:var(--muted);font-size:15px}
+.plugin .tagline{font-size:17px;line-height:1.5;color:var(--muted);margin:10px 0 18px}
+.connect{min-width:0;padding-top:5px}
+.url-label{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}
+.plugin-url{width:100%;display:block;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;padding:14px 12px;font:13px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;resize:none;overflow-wrap:anywhere;word-break:break-all}
+.copy{width:100%;margin-top:12px;border:0;border-radius:10px;background:var(--accent);color:#11251c;font-weight:700;padding:14px 18px;cursor:pointer}
+.copy:hover{background:#d3f8e3}.copy:disabled{opacity:.7}
+.status{min-height:24px;color:var(--accent);font-size:13px;margin-top:9px}.status:empty{display:none}
+section{padding:42px 0;border-top:1px solid var(--line)}.section-head{margin-bottom:28px}
+.steps{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;counter-reset:steps}
+.steps li{counter-increment:steps;border-top:1px solid var(--line);padding-top:18px;color:var(--muted);font-size:15px}
+.steps li:before{content:"0" counter(steps);display:block;color:var(--accent);font:13px ui-monospace,monospace;margin-bottom:12px}.steps strong{color:var(--text)}
+.note{font-size:14px;color:var(--muted);border-left:2px solid var(--line);padding-left:18px;margin:26px 0 0}
+.faq{display:grid;grid-template-columns:1fr 1fr;gap:30px}.faq p{font-size:15px;color:var(--muted);margin:0}
+.scale{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.score{border-radius:8px;padding:5px 11px;background:var(--bg);font-weight:650}
+.red{color:#E57373}.orange{color:#FFB74D}.blue{color:#64B5F6}.green{color:#81C784}
+details{border-top:1px solid var(--line);padding:23px 0}summary{cursor:pointer;font-weight:600}
+.plugin-settings{grid-column:1/-1;padding:18px 0 0}.plugin-settings summary{color:var(--accent)}
+.settings-content{padding-top:22px}.plugin-settings .faq p{margin:0}
+.guide h3{font-size:17px;margin:22px 0 8px}.guide h3:first-child{margin-top:0}.guide p,.guide li{font-size:15px}.guide ol{padding-left:22px;color:var(--muted)}
+.history{color:var(--muted);font-size:14px;max-width:780px;padding-top:18px}.history h3{color:var(--text);font-size:16px}
+footer{display:flex;align-items:center;justify-content:flex-start;gap:8px 24px;flex-wrap:wrap;padding:24px 0 36px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.back-top{position:fixed;right:24px;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:25;display:grid;place-items:center;width:48px;height:48px;padding:0;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--accent);box-shadow:0 4px 18px #0004;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(8px);transition:opacity .18s,transform .18s,border-color .18s}
+.back-top.is-visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+.back-top:hover{border-color:var(--accent)}.back-top svg{display:block;width:25px;height:25px}
+@media(min-width:1600px){.workspace{display:grid;grid-template-columns:0 minmax(0,1fr);align-items:stretch}.toc-desktop{display:block;position:sticky;align-self:start;top:calc(var(--header-height) + 24px);width:220px;min-width:220px;max-width:220px;max-height:calc(100dvh - var(--header-height) - 48px);overflow:auto;transform:translateX(-244px);padding-top:20px}.toc-desktop nav{display:grid;gap:4px}main{grid-column:2}.toc-toggle,.mobile-toc-panel{display:none}}
+@media(max-width:760px){.header-inner{height:56px;gap:8px}.brand{font-size:clamp(12px,3.5vw,16px)}.toc-toggle{width:38px;height:38px}.hero{padding:18px 0 22px}.plugin{grid-template-columns:1fr;gap:20px;padding:24px}.steps{grid-template-columns:1fr 1fr}.faq{grid-template-columns:1fr}h2{font-size:25px}.back-top{right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px))}}
+@media(max-width:400px){.wrap,.workspace{width:calc(100% - 32px)}.plugin{padding:20px}.steps{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.back-top{transition:none}}
 </style>
 </head>
-<body id="top"><aside class="toc-desktop" aria-label="Оглавление"><h2>Оглавление</h2><nav><a href="#ratings">Рейтинг</a><a href="#shikimori">Shikimori by WaterFAQ</a><a href="#oldhistory">Старый вид истории просмотров</a><a href="#install">Как установить</a><a href="#help">Помощь</a><a href="#history">История изменений</a></nav></aside><div class="wrap">
-<header class="topbar"><h1 class="brand">Плагины для Lampa by WaterFAQ</h1><details class="toc-mobile"><summary aria-label="Открыть оглавление" title="Оглавление"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></summary><nav aria-label="Разделы страницы"><a href="#ratings">Рейтинг</a><a href="#shikimori">Shikimori by WaterFAQ</a><a href="#oldhistory">Старый вид истории просмотров</a><a href="#install">Как установить</a><a href="#help">Помощь</a><a href="#history">История изменений</a></nav></details></header>
+<body id="top">
+<header class="topbar"><div class="wrap header-inner"><h1 class="brand"><a href="#top">Плагины для Lampa by WaterFAQ</a></h1><button class="toc-toggle" type="button" aria-label="Открыть оглавление" aria-expanded="false" aria-controls="mobile-toc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div><div class="page-scroll-progress" aria-hidden="true"><span></span></div></header><nav class="mobile-toc-panel" id="mobile-toc" aria-label="Оглавление" hidden><a href="#ratings">Рейтинг</a><a href="#shikimori">Shikimori by WaterFAQ</a><a href="#oldhistory">Старый вид истории просмотров</a><a href="#install">Как установить</a><a href="#help">Помощь</a><a href="#history">История изменений</a></nav><div class="workspace"><aside class="toc-desktop" aria-label="Оглавление"><nav><a href="#ratings">Рейтинг</a><a href="#shikimori">Shikimori by WaterFAQ</a><a href="#oldhistory">Старый вид истории просмотров</a><a href="#install">Как установить</a><a href="#help">Помощь</a><a href="#history">История изменений</a></nav></aside>
 <main>
 <div class="hero"><p class="lead">Плагины WaterFAQ для Lampa: описания возможностей, инструкции и история обновлений.</p></div>
 <div class="catalog" id="plugins" aria-label="Каталог плагинов">
@@ -30,25 +85,57 @@ footer{justify-content:flex-start;gap:8px 24px}
 <section id="install" aria-labelledby="install-title"><div class="section-head"><h2 id="install-title">Как установить</h2></div><ol class="steps"><li><strong>Выберите плагин</strong><br>Скопируйте его адрес в каталоге выше.</li><li><strong>Откройте расширения</strong><br>Настройки → Расширения. В некоторых сборках — «Плагины».</li><li><strong>Добавьте адрес</strong><br>Выберите «Добавить плагин», вставьте ссылку и подтвердите.</li><li><strong>Перезапустите Lampa</strong><br>Каждый выбранный плагин добавляется отдельно.</li></ol><p class="note">Адреса подключения постоянные. Для обновления менять ссылку не нужно. Отключите прежние копии того же плагина с других адресов.</p></section>
 <section id="help" aria-labelledby="help-title"><div class="section-head"><h2 id="help-title">Если что-то не работает</h2></div><div class="faq"><article><h3>Обновление не появилось</h3><p>Полностью перезапустите Lampa или обновите плагины средствами своей сборки. Адрес подключения остаётся тем же.</p></article><article><h3>Данные выглядят устаревшими</h3><p>Для рейтингов: Настройки → Рейтинг → Очистить кэш. Для Shikimori: Фильтры → Очистить кэш сопоставлений. Параллельные плагины, меняющие те же оценки или цвета, могут мешать отображению.</p></article></div><p class="note">Для работы нужен доступ к соответствующим сервисам. Воспроизведение зависит от вашей сборки Lampa и установленных источников просмотра. <a href="https://github.com/Water-FAQ/lampa-plugins/issues">Сообщить о проблеме</a>.</p></section>
 <details id="history"><summary>Выпуски и история изменений</summary><div class="history"><h3>Старый вид истории просмотров 1.0.0 · 27 октября 2026</h3><p>Первый стабильный выпуск. Возвращает экран истории, использовавшийся до Lampa 3.4.0. Сохранение просмотров и синхронизация CUB остаются штатными.</p><h3>Рейтинг 1.0.0 · 27 октября 2026</h3><p>Первый стабильный выпуск: приоритет источников, фоновая загрузка для постеров, цветные оценки и настройки.</p><h3>Shikimori by WaterFAQ 1.0.0 · 25 октября 2026</h3><p>Каталог аниме, подборки и фильтры, поиск карточек TMDB, рейтинг Shikimori и сведения о студии, создавшей аниме.</p><p><a href="https://github.com/Water-FAQ/lampa-plugins/releases">Все релизы</a> · <a href="https://github.com/Water-FAQ/lampa-plugins/blob/main/CHANGELOG.md">История изменений</a></p></div></details>
-</main><footer><span>WaterFAQ · Плагины для Lampa</span><a href="https://github.com/Water-FAQ/lampa-plugins">Страница GitHub</a></footer>
-</div><button class="back-top" type="button" aria-label="Наверх" title="Наверх" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button><script>
+<footer><span>WaterFAQ · Плагины для Lampa</span><a href="https://github.com/Water-FAQ/lampa-plugins">Страница GitHub</a></footer></main>
+</div><button class="back-top" type="button" aria-label="Наверх" title="Наверх" aria-hidden="true" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button><script>
 (function(){
-var header=document.querySelector('.topbar'),backTop=document.querySelector('.back-top');
-function sizeHeader(){if(header) document.documentElement.style.setProperty('--header-height',header.getBoundingClientRect().height+'px');}
-sizeHeader();
-if(window.ResizeObserver && header) new ResizeObserver(sizeHeader).observe(header);
-else window.addEventListener('resize',sizeHeader);
-var scrollQueued=false;
-function updateBackTop(){backTop.hidden=window.scrollY<320;scrollQueued=false;}
-window.addEventListener('scroll',function(){if(!scrollQueued){scrollQueued=true;window.requestAnimationFrame(updateBackTop);}},{passive:true});
-backTop.addEventListener('click',function(){window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});});
-updateBackTop();
-var toc=document.querySelector('.toc-mobile');
-if(toc){
-toc.addEventListener('click',function(event){if(event.target.closest('a')) toc.removeAttribute('open');});
-document.addEventListener('click',function(event){if(!toc.contains(event.target)) toc.removeAttribute('open');});
-document.addEventListener('keydown',function(event){if(event.key==='Escape' && toc.open){toc.open=false;toc.querySelector('summary').focus();}});
+
+var header=document.querySelector('.topbar'),backTop=document.querySelector('.back-top'),progress=document.querySelector('.page-scroll-progress span');
+var menu=document.querySelector('.mobile-toc-panel'),menuButton=document.querySelector('.toc-toggle');
+var tocLinks=Array.prototype.slice.call(document.querySelectorAll('.toc-desktop a,.mobile-toc-panel a'));
+var sections=Array.prototype.slice.call(document.querySelectorAll('#ratings,#shikimori,#oldhistory,#install,#help,#history'));
+var scrollingTo='',scrollTimer,scrollQueued=false;
+function reduced(){return window.matchMedia('(prefers-reduced-motion: reduce)').matches;}
+function closeMenu(){menu.hidden=true;menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','Открыть оглавление');}
+function active(id){tocLinks.forEach(function(link){var yes=link.hash==='#'+id;link.classList.toggle('is-active',yes);if(yes)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');});}
+function updateScroll(){
+    scrollQueued=false;
+    var total=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
+    var ratio=total?Math.max(0,Math.min(1,window.scrollY/total)):0;
+    progress.style.transform='scaleX('+ratio+')';
+    var visible=window.scrollY>180;
+    backTop.classList.toggle('is-visible',visible);backTop.tabIndex=visible?0:-1;backTop.setAttribute('aria-hidden',String(!visible));
+    if(scrollingTo)return;
+    var marker=header.getBoundingClientRect().height+24,current=sections[0];
+    sections.forEach(function(section){if(section.getBoundingClientRect().top<=marker)current=section;});
+    if(total>0 && window.scrollY>=total-2)current=sections[sections.length-1];
+    if(current)active(current.id);
 }
+function schedule(){if(!scrollQueued){scrollQueued=true;window.requestAnimationFrame(updateScroll);}}
+function finishScroll(){scrollingTo='';clearTimeout(scrollTimer);schedule();}
+function sizeHeader(){document.documentElement.style.setProperty('--header-height',header.getBoundingClientRect().height+'px');schedule();}
+sizeHeader();
+if(window.ResizeObserver){var layoutObserver=new ResizeObserver(sizeHeader);layoutObserver.observe(header);layoutObserver.observe(document.querySelector('main'));}
+menuButton.addEventListener('click',function(){var open=menu.hidden;menu.hidden=!open;menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?'Закрыть оглавление':'Открыть оглавление');});
+document.addEventListener('pointerdown',function(event){if(!menu.hidden && !menu.contains(event.target) && !menuButton.contains(event.target))closeMenu();});
+document.addEventListener('keydown',function(event){if(event.key==='Escape' && !menu.hidden){closeMenu();menuButton.focus();}});
+tocLinks.forEach(function(link){link.addEventListener('click',function(event){
+    var id=link.hash.slice(1),target=document.getElementById(id);if(!target)return;
+    event.preventDefault();closeMenu();scrollingTo=id;active(id);
+    if(target.tagName==='DETAILS')target.open=true;
+    history.replaceState(null,'','#'+id);
+    target.scrollIntoView({behavior:reduced()?'instant':'smooth',block:'start'});
+    clearTimeout(scrollTimer);scrollTimer=setTimeout(finishScroll,reduced()?0:1400);
+});});
+document.querySelector('.brand a').addEventListener('click',function(event){event.preventDefault();closeMenu();finishScroll();history.replaceState(null,'',location.pathname+location.search);window.scrollTo({top:0,behavior:reduced()?'instant':'smooth'});});
+backTop.addEventListener('click',function(){closeMenu();finishScroll();window.scrollTo({top:0,behavior:reduced()?'instant':'smooth'});});
+window.addEventListener('scroll',schedule,{passive:true});
+window.addEventListener('scrollend',function(){if(scrollingTo)finishScroll();});
+window.addEventListener('wheel',function(){if(scrollingTo)finishScroll();},{passive:true});
+window.addEventListener('touchstart',function(){if(scrollingTo)finishScroll();},{passive:true});
+window.addEventListener('resize',function(){sizeHeader();if(window.innerWidth>=1600)closeMenu();});
+document.addEventListener('toggle',schedule,true);
+if(location.hash){var initial=document.getElementById(decodeURIComponent(location.hash.slice(1)));if(initial){if(initial.tagName==='DETAILS')initial.open=true;requestAnimationFrame(function(){initial.scrollIntoView({behavior:'instant',block:'start'});schedule();});}}
+updateScroll();
 var buttons=document.querySelectorAll('.copy');
 for(var i=0;i<buttons.length;i++) bind(buttons[i]);
 function bind(button){
