@@ -55,7 +55,7 @@ https://water-faq.github.io/lampa-plugins/ratings.js
 Добавьте адрес в расширения Lampa и перезапустите приложение:
 
 ```text
-https://water-faq.github.io/lampa-plugins/Shikimori.js
+https://water-faq.github.io/lampa-plugins/shikimori.js
 ```
 
 [Инструкция и копирование адреса](https://water-faq.github.io/lampa-plugins/)

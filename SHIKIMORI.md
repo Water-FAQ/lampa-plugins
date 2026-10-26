@@ -12,7 +12,7 @@
 2. Выберите **Добавить плагин** и вставьте адрес:
 
    ```text
-   https://water-faq.github.io/lampa-plugins/Shikimori.js
+   https://water-faq.github.io/lampa-plugins/shikimori.js
    ```
 
 3. Подтвердите добавление и перезапустите Lampa.

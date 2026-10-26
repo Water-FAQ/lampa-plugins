@@ -58,7 +58,7 @@ https://water-faq.github.io/lampa-plugins/ratings.js
 Постоянный адрес подключения:
 
 ```text
-https://water-faq.github.io/lampa-plugins/Shikimori.js
+https://water-faq.github.io/lampa-plugins/shikimori.js
 ```
 
 Раздел **Shikimori** в боковом меню: популярное аниме, текущий сезон, анонсы, фильмы, лучшие по рейтингу и случайная подборка. Фильтры по жанру, типу, статусу и сезону. Выбор аниме открывает найденную карточку TMDB в Lampa; полная карточка дополняется рейтингом Shikimori и сведениями о студии, создавшей аниме.
