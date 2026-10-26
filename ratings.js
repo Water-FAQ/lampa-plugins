@@ -1,11 +1,11 @@
-/* Ratings for Lampa, 0.3.1.
+/* Ratings for Lampa, 1.0.0.
  * Uses Lampa's native CUB metadata source to preload ratings by exact TMDB ID.
  * No IMDb/Kinopoisk APIs, title searches or script downloads.
  */
 (function () {
     'use strict';
     if (window.waterfaq_ratings) return;
-    window.waterfaq_ratings = {version: '0.3.1'};
+    window.waterfaq_ratings = {version: '1.0.0'};
 
     var CACHE = 'wf_ratings_native_v1';
     var DAY = 86400000;
