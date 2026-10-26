@@ -1,11 +1,11 @@
-/* Ratings for Lampa, 0.2.0.
- * Uses only metadata and rating elements already supplied by Lampa.
- * No network requests, external APIs, title searches or script downloads.
+/* Ratings for Lampa, 0.3.0.
+ * Uses Lampa's native CUB metadata source to preload ratings by exact TMDB ID.
+ * No IMDb/Kinopoisk APIs, title searches or script downloads.
  */
 (function () {
     'use strict';
     if (window.waterfaq_ratings) return;
-    window.waterfaq_ratings = {version: '0.2.0'};
+    window.waterfaq_ratings = {version: '0.3.0'};
 
     var CACHE = 'wf_ratings_native_v1';
     var DAY = 86400000;
@@ -15,6 +15,8 @@
     var started = false;
     var saveTimer, cleanTimer;
     var names = ['tmdb', 'imdb', 'kp'];
+    var queue = [], pending = {}, retryUntil = {}, revisions = {};
+    var running = 0, generation = 0, pumpTimer, intersection;
 
     function setting(name, fallback) { return Lampa.Storage.get('wf_ratings_' + name, fallback); }
     function rating(value) {
@@ -111,9 +113,105 @@
         }, 350);
     }
     function latest(record) {
-        var time = 0;
+        var time = Number(record && record.checked) || 0;
         names.forEach(function (source) { if (record && record[source]) time = Math.max(time, Number(record[source].time) || 0); });
         return time;
+    }
+    function visible(node) {
+        if (!connected(node)) return false;
+        var rect = node.getBoundingClientRect();
+        return rect.width > 0 && rect.height > 0 && rect.bottom > -250 && rect.right > -250 && rect.top < window.innerHeight + 250 && rect.left < window.innerWidth + 250;
+    }
+    function needsLoad(data, id) {
+        var source = data.source || 'tmdb';
+        if ((source !== 'tmdb' && source !== 'cub') || !/^\d+$/.test(String(data.id))) return false;
+        if (retryUntil[id] > Date.now()) return false;
+        if (rating(values(data, id)[setting('priority', 'imdb')])) return false;
+        return !(cache[id] && Date.now() - cache[id].checked < DAY);
+    }
+    function preload(node) {
+        if (!visible(node)) return;
+        var data = cardData(node);
+        if (!data) return;
+        var id = key(data);
+        if (!needsLoad(data, id)) return;
+        if (pending[id]) {
+            if (pending[id].nodes.indexOf(node) === -1) pending[id].nodes.push(node);
+            return;
+        }
+        var job = {id: id, movie: String(data.id), method: type(data), source: data.source || 'tmdb', nodes: [node], generation: generation};
+        pending[id] = job;
+        queue.push(job);
+        clearTimeout(pumpTimer);
+        pumpTimer = setTimeout(pump, 50);
+    }
+    function wanted(job) {
+        return job.nodes.some(function (node) {
+            var data = visible(node) && cardData(node);
+            return data && key(data) === job.id && needsLoad(data, job.id);
+        });
+    }
+    function metadata(job, done) {
+        var network, timer, finished = false;
+        function finish(json, error) {
+            if (finished) return;
+            finished = true;
+            clearTimeout(timer);
+            done(json, error);
+        }
+        try {
+            if (!Lampa.TMDB || typeof Lampa.TMDB.api !== 'function' || typeof Lampa.TMDB.key !== 'function' || !Lampa.Reguest) throw new Error('Metadata API unavailable');
+            var language = Lampa.Storage.get('tmdb_lang', Lampa.Storage.get('language', 'ru'));
+            var imageLanguage = String(language || 'ru').split(/[-_]/)[0];
+            // Match Lampa's primary full-metadata request. CUB enrichment is not
+            // present in the stripped-down response with only external_ids.
+            var path = job.method + '/' + encodeURIComponent(job.movie) + '?api_key=' + encodeURIComponent(Lampa.TMDB.key()) + '&language=' + encodeURIComponent(language) + '&append_to_response=content_ratings,release_dates,external_ids,keywords,alternative_titles,images&include_image_language=' + encodeURIComponent(imageLanguage + ',en,null');
+            var url;
+            // The native CUB metadata response contains IMDb/KP; the ordinary
+            // TMDB proxy often returns only TMDB. Both use the same TMDB IDs.
+            if (Lampa.Manifest && Lampa.Manifest.cub_domain) {
+                var protocol = Lampa.Utils && Lampa.Utils.protocol ? Lampa.Utils.protocol() : 'https://';
+                var account = Lampa.Storage.get('account', {});
+                if (typeof account === 'string') { try { account = JSON.parse(account); } catch (e) { account = {}; } }
+                url = protocol + 'tmdb.' + Lampa.Manifest.cub_domain + '/3/' + path + '&email=' + encodeURIComponent(account && account.email || '');
+            } else url = Lampa.TMDB.api(path);
+            network = new Lampa.Reguest();
+            timer = setTimeout(function () { finish(null, true); network.clear(); }, 15000);
+            network.timeout(12000);
+            network.silent(url, function (json) { finish(json, false); }, function () { finish(null, true); });
+        } catch (e) { finish(null, true); }
+    }
+    function pump() {
+        clearTimeout(pumpTimer);
+        while (running < 2 && queue.length) {
+            var job = queue.shift();
+            if (!wanted(job)) { if (pending[job.id] === job) delete pending[job.id]; continue; }
+            execute(job);
+        }
+    }
+    function execute(job) {
+        running++;
+        var revision = revisions[job.id] || 0;
+        metadata(job, function (json, error) {
+            running--;
+            if (pending[job.id] === job) delete pending[job.id];
+            if (job.generation === generation) {
+                // A later native full-card update takes precedence over this response.
+                if (error || !json || String(json.id) !== job.movie || (json.media_type && json.media_type !== job.method)) retryUntil[job.id] = Date.now() + 5 * 60000;
+                else if ((revisions[job.id] || 0) === revision) {
+                    var incoming = extract(json);
+                    // A successful metadata response also confirms absent ratings.
+                    if (!Object.prototype.hasOwnProperty.call(incoming, 'imdb')) incoming.imdb = 0;
+                    if (!Object.prototype.hasOwnProperty.call(incoming, 'kp')) incoming.kp = 0;
+                    merge(job.id, incoming, true);
+                    if (!cache[job.id]) cache[job.id] = {};
+                    cache[job.id].checked = Date.now();
+                    save();
+                    updateCards(job.id);
+                }
+            }
+            pumpTimer = setTimeout(pump, 120);
+        });
     }
     function color(n) {
         if (setting('scale', 'detailed') === 'simple') return n < 5 ? '#E57373' : n < 7 ? '#999999' : '#81C784';
@@ -177,6 +275,7 @@
                 var data = cardData(node);
                 if (data && merge(key(data), extract(data), false)) updateCards(key(data));
                 drawCard(node);
+                preload(node);
             };
             node.addEventListener('visible', update);
             node.addEventListener('hover:focus', update);
@@ -185,9 +284,11 @@
             [100, 400, 1000].forEach(function (delay) { setTimeout(function () { if (connected(node)) update(); }, delay); });
         }
         if (cards.indexOf(node) === -1) cards.push(node);
+        if (intersection) intersection.observe(node);
         var data = cardData(node);
         if (data && merge(key(data), extract(data), false)) updateCards(key(data));
         drawCard(node);
+        preload(node);
     }
     function colorLine(line) {
         var badges = line.querySelectorAll('.full-start__rate');
@@ -212,7 +313,14 @@
                 view.observed[source] = true;
             } else if (view.observed[source]) incoming[source] = 0;
         });
-        if (merge(view.id, incoming, true)) updateCards(view.id);
+        if (merge(view.id, incoming, true)) {
+            revisions[view.id] = (revisions[view.id] || 0) + 1;
+            updateCards(view.id);
+        }
+        if (incoming.imdb !== undefined || incoming.kp !== undefined) {
+            if (!cache[view.id]) cache[view.id] = {};
+            if (!cache[view.id].checked || Date.now() - cache[view.id].checked >= DAY) { cache[view.id].checked = Date.now(); save(); }
+        }
         colorLine(line);
         bindLine(line, view);
     }
@@ -272,13 +380,18 @@
         }
     }
     function clean() {
-        cards = cards.filter(connected);
+        cards = cards.filter(function (node) {
+            if (connected(node)) return true;
+            if (intersection) intersection.unobserve(node);
+            return false;
+        });
         views = views.filter(function (view) { return connected(view.root); });
     }
     function refresh() {
         clean();
         views.forEach(syncView);
         updateCards();
+        cards.forEach(preload);
         var lines = document.querySelectorAll('.full-start-new__rate-line, .full-start__rate-line');
         for (var i = 0; i < lines.length; i++) colorLine(lines[i]);
     }
@@ -293,9 +406,13 @@
         add('full_color', 'trigger', 'Цветные рейтинги внутри карточки', null, true);
         add('scale', 'select', 'Цветовая шкала', {detailed: 'Подробная - четыре цвета', simple: 'Простая - три цвета'}, 'detailed');
         Lampa.SettingsApi.addParam({component: 'wf_ratings', param: {name: 'wf_ratings_clear', type: 'button'},
-            field: {name: 'Очистить кэш', description: 'Сохраняются только оценки, полученные самой Lampa, на сутки. Дополнительных запросов нет.'},
+            field: {name: 'Очистить кэш', description: 'Оценки из источника Lampa сохраняются на сутки и загружаются для постеров в фоне.'},
             onChange: function () {
                 cache = {};
+                generation++;
+                queue = [];
+                pending = {};
+                retryUntil = {};
                 clearTimeout(saveTimer);
                 Lampa.Storage.set(CACHE, cache);
                 refresh();
@@ -323,6 +440,9 @@
         document.head.appendChild(style);
         settings();
         Lampa.Listener.follow('full', onFull);
+        if (window.IntersectionObserver) intersection = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) { if (entry.isIntersecting) preload(entry.target); });
+        }, {rootMargin: '250px'});
         var observer = new MutationObserver(function (mutations) {
             var removed = false;
             mutations.forEach(function (m) {
@@ -338,6 +458,13 @@
         });
         observer.observe(document.body, {childList: true, subtree: true});
         discover(document.body);
+        if (!intersection) {
+            var scanTimer;
+            var scan = function () { clearTimeout(scanTimer); scanTimer = setTimeout(function () { clean(); cards.forEach(preload); }, 180); };
+            document.addEventListener('scroll', scan, true);
+            document.addEventListener('transitionend', scan, true);
+            window.addEventListener('resize', scan);
+        }
         try {
             var active = Lampa.Activity.active();
             if (active && active.activity && (active.movie || active.card)) onFull({type: 'complite', object: active, data: {movie: active.movie || active.card}});
