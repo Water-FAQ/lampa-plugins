@@ -7,7 +7,7 @@
 ## Плагины
 
 - [Рейтинг](#ratings) — выбор источника оценки на постерах и цветные рейтинги.
-- [Shikimori](#shikimori) — каталог аниме, подборки, рейтинг Shikimori и сведения о студии, создавшей аниме.
+- [Shikimori by WaterFAQ](#shikimori) — каталог аниме, подборки, рейтинг Shikimori и сведения о студии, создавшей аниме.
 - [Старый вид истории просмотров](#oldhistory) — экран истории до Lampa 3.4.0.
 
 ## Установка и обновления
@@ -53,7 +53,7 @@ https://water-faq.github.io/lampa-plugins/ratings.js
 
 <a id="shikimori"></a>
 
-## Shikimori
+## Shikimori by WaterFAQ
 
 Постоянный адрес подключения:
 
@@ -79,7 +79,7 @@ https://water-faq.github.io/lampa-plugins/oldhistory.js
 
 ## Версии и обратная связь
 
-Плагины обновляются независимо. Новый плагин «Рейтинг» выпущен как **1.0.0** с тегом `ratings-v1.0.0`; существующий выпуск Shikimori `v1.0.0` сохранён.
+Плагины обновляются независимо. Доступны выпуски Shikimori by WaterFAQ (`v1.0.0`), «Рейтинг» (`ratings-v1.0.0`) и «Старый вид истории просмотров» (`oldhistory-v1.0.0`).
 
 О проблемах можно сообщить в [Issues](https://github.com/Water-FAQ/lampa-plugins/issues): укажите версию Lampa, устройство, адрес плагина и пример карточки.
 
