@@ -1,11 +1,11 @@
-/* Ratings for Lampa, 0.3.0.
+/* Ratings for Lampa, 0.3.1.
  * Uses Lampa's native CUB metadata source to preload ratings by exact TMDB ID.
  * No IMDb/Kinopoisk APIs, title searches or script downloads.
  */
 (function () {
     'use strict';
     if (window.waterfaq_ratings) return;
-    window.waterfaq_ratings = {version: '0.3.0'};
+    window.waterfaq_ratings = {version: '0.3.1'};
 
     var CACHE = 'wf_ratings_native_v1';
     var DAY = 86400000;
@@ -333,6 +333,9 @@
         if (!line._wfNativeRatingsObserver) {
             var timer;
             line._wfNativeRatingsObserver = new MutationObserver(function () {
+                // Mutation observers run before paint: color new/changed values
+                // immediately, while leaving cache/poster updates debounced.
+                colorLine(line);
                 clearTimeout(timer);
                 timer = setTimeout(function () {
                     var current = line._wfNativeRatingsView;
